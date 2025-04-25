@@ -5,6 +5,8 @@ jobs:
   qa:
     name: Quality check
     runs-on: ubuntu-latest
+    env:
+      DJANGO_ALLOWED_HOSTS: "localhost 127.0.0.1"
     steps:
       - uses: actions/checkout@v1
       - name: Set up Python

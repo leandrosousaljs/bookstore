@@ -5,7 +5,7 @@ from product.serializers import ProductSerializer
 
 
 class ProductViewSet(ModelViewSet):
-  serializer_class = ProductSerializer
-  
-  def get_queryset(self):
-    return Product.objects.all().order_by('id')
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        return Product.objects.all().order_by("id")

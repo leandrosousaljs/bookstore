@@ -7,24 +7,24 @@ from order.models import Order
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-  email = factory.Faker('pystr')
-  username = factory.Faker('pystr')
-  
-  class Meta:
-    model = User
+    email = factory.Faker("pystr")
+    username = factory.Faker("pystr")
+
+    class Meta:
+        model = User
 
 
 class OrderFactory(factory.django.DjangoModelFactory):
-  user = factory.SubFactory(UserFactory)
-  
-  @factory.post_generation
-  def product(self, create, extracted, **kwargs):
-    if not create:
-      return
+    user = factory.SubFactory(UserFactory)
 
-    if extracted:
-      for product in extracted:
-        self.product.add(product)
+    @factory.post_generation
+    def product(self, create, extracted, **kwargs):
+        if not create:
+            return
 
-  class Meta:
-    model = Order
+        if extracted:
+            for product in extracted:
+                self.product.add(product)
+
+    class Meta:
+        model = Order

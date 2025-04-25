@@ -5,26 +5,63 @@ jobs:
   qa:
     name: Quality check
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14.0-alpine
+        env:
+          POSTGRES_DB: bookstore_dev_db
+          POSTGRES_USER: bookstore_dev
+          POSTGRES_PASSWORD: bookstore_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      SECRET_KEY: "test-secret-key"
+      DJANGO_ALLOWED_HOSTS: "localhost 127.0.0.1"
+      SQL_ENGINE: django.db.backends.postgresql
+      SQL_DATABASE: bookstore_dev_db
+      SQL_USER: bookstore_dev
+      SQL_PASSWORD: bookstore_dev
+      SQL_HOST: localhost
+      SQL_PORT: 5432
+
     steps:
       - uses: actions/checkout@v1
+
       - name: Set up Python
-        uses: actions/setup-python@master
+        uses: actions/setup-python@v4
         with:
           python-version: 3.13
-      - name: Install poetry
+
+      - name: Install Poetry
         run: |
           pip install -U pip
           pip install poetry
-          poetry install
         env:
           POETRY_VIRTUALENVS_CREATE: false
 
-      - name: View poetry --help
-        run: poetry --help
-
       - name: Install dependencies
-        shell: bash
-        run: python -m poetry install
+        run: poetry install
+
+      - name: Run migrations
+        run: poetry run python manage.py migrate --noinput
+
+      - name: Esperar banco subir
+        run: |
+          for i in {1..10}; do
+            nc -z localhost 5432 && echo "Banco está pronto" && break
+            echo "Esperando banco subir..."
+            sleep 2
+          done
+
+      - name: Run tests
+        run: poetry run python manage.py test
 
       - name: Wemake Python Stylguide
         uses: wemake-services/wemake-python-styleguide@0.16.0

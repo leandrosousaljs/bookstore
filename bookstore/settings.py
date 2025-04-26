@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-rj=vt*zogs%)t*7&q)z@z41(ko-i0ot3wck=!ze-wd^t&x2u*^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'leandrosousaljs.pythonanywhere.com']
 
 
 # Application definition
@@ -155,5 +155,3 @@ REST_FRAMEWORK = {
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = int(os.environ.get("DEBUG", default=0))
-
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
